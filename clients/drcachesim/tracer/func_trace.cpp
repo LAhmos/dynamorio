@@ -120,6 +120,9 @@ free_func_entry(void *entry)
     delete_func_metadata((func_metadata_t *)entry);
 }
 
+
+
+
 // NOTE: try to avoid invoking any code that could be traced by func_pre_hook
 //       (e.g., STL, libc, etc.)
 static void
@@ -136,9 +139,15 @@ func_pre_hook(void *wrapcxt, DR_PARAM_INOUT void **user_data)
     func_metadata_t *f = (func_metadata_t *)drvector_get_entry(&funcs_wrapped, (uint)idx);
     uintptr_t retaddr = (uintptr_t)drwrap_get_retaddr(wrapcxt);
     uintptr_t f_id = (uintptr_t)f->id;
+    uintptr_t sp = (uintptr_t)drwrap_get_sp(wrapcxt);
+    uintptr_t fp = (uintptr_t)drwrap_get_fp(wrapcxt);
+    
 
     v->entries[v->size++] = func_trace_entry_t(TRACE_MARKER_TYPE_FUNC_ID, f_id);
     v->entries[v->size++] = func_trace_entry_t(TRACE_MARKER_TYPE_FUNC_RETADDR, retaddr);
+    v->entries[v->size++] = func_trace_entry_t(TRACE_MARKER_TYPE_FUNC_STACK_PTR, sp);
+    v->entries[v->size++] = func_trace_entry_t(TRACE_MARKER_TYPE_FUNC_FRAME_PTR, fp);
+    
     for (int i = 0; i < f->arg_num; i++) {
         uintptr_t arg_i = (uintptr_t)drwrap_get_arg(wrapcxt, i);
         v->entries[v->size++] = func_trace_entry_t(TRACE_MARKER_TYPE_FUNC_ARG, arg_i);
@@ -227,6 +236,15 @@ get_module_basename(const module_data_t *mod)
     return mod_name;
 }
 
+static bool enumerate_sym(const char *name, size_t modoffs, void *data) {
+    if (*name != 0) {
+        dr_fprintf(0, "Offset: " PFX " Name: %s\n", modoffs, name);
+            drvector_append(&func_names,
+                        create_func_metadata(name, 0, 0, false));
+        
+    }
+    return true;
+}
 static void
 instru_funcs_module_load(void *drcontext, const module_data_t *mod, bool loaded)
 {
@@ -249,6 +267,8 @@ instru_funcs_module_load(void *drcontext, const module_data_t *mod, bool loaded)
     // arg counts before we can write to funclist.  We use this vector to remember
     // what to write.  We expect the common case to be zero entries since the
     // average app library probably has zero traced functions in it.
+    drsym_enumerate_symbols(mod->full_path, enumerate_sym, NULL, DRSYM_DEFAULT_FLAGS);
+
     drvector_t vec_pcs;
     drvector_init(&vec_pcs, 0, false, nullptr);
     for (size_t i = 0; i < func_names.entries; i++) {

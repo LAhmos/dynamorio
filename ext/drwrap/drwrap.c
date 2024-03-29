@@ -797,6 +797,33 @@ drwrap_get_retval(void *wrapcxt_opaque)
     return (void *)wrapcxt->mc->IF_X86_ELSE(xax, IF_RISCV64_ELSE(a0, r0));
 }
 
+
+DR_EXPORT
+void *
+drwrap_get_sp(void *wrapcxt_opaque)
+{
+    drwrap_context_t *wrapcxt = (drwrap_context_t *)wrapcxt_opaque;
+    if (wrapcxt == NULL || wrapcxt->mc == NULL)
+        return NULL;
+    /* ensure we have the info we need */
+    drwrap_get_mcontext_internal(wrapcxt_opaque, DR_MC_CONTROL);
+    return (void *)wrapcxt->mc->xsp;
+}
+
+DR_EXPORT
+void *
+drwrap_get_fp(void *wrapcxt_opaque)
+{
+    drwrap_context_t *wrapcxt = (drwrap_context_t *)wrapcxt_opaque;
+    if (wrapcxt == NULL || wrapcxt->mc == NULL)
+        return NULL;
+    /* ensure we have the info we need */
+    drwrap_get_mcontext_internal(wrapcxt_opaque, DR_MC_CONTROL);
+    
+    return (void *)wrapcxt->mc->xbp;
+}
+
+
 DR_EXPORT
 bool
 drwrap_set_retval(void *wrapcxt_opaque, void *val)

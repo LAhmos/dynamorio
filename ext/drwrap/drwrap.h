@@ -634,6 +634,25 @@ drwrap_get_retval(void *wrapcxt);
 
 DR_EXPORT
 /**
+ * Returns the return value of the wrapped function
+ * represented by \p wrapcxt.
+ * Assumes a pointer-sized return value.
+ * May only be called from a \p drwrap_wrap post-function callback.
+ */
+void *
+drwrap_get_sp(void *wrapcxt);
+DR_EXPORT
+/**
+ * Returns the return value of the wrapped function
+ * represented by \p wrapcxt.
+ * Assumes a pointer-sized return value.
+ * May only be called from a \p drwrap_wrap post-function callback.
+ */
+void *
+drwrap_get_fp(void *wrapcxt);
+
+DR_EXPORT
+/**
  * Sets the return value of the wrapped function
  * represented by \p wrapcxt to \p val.
  * Assumes a pointer-sized return value.

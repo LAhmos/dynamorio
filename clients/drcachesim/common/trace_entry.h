@@ -627,6 +627,9 @@ typedef enum {
      */
     TRACE_MARKER_TYPE_VECTOR_LENGTH,
 
+    TRACE_MARKER_TYPE_FUNC_STACK_PTR,
+    TRACE_MARKER_TYPE_FUNC_FRAME_PTR,
+
     // ...
     // These values are reserved for future built-in marker types.
     // ...

@@ -396,6 +396,14 @@ view_t::parallel_shard_memref(void *shard_data, const memref_t &memref)
             std::cerr << "<marker: function return value 0x" << std::hex
                       << memref.marker.marker_value << std::dec << ">\n";
             break;
+        case TRACE_MARKER_TYPE_FUNC_STACK_PTR:
+            std::cerr << "<marker: function sp value 0x" << std::hex
+                      << memref.marker.marker_value << std::dec << ">\n";
+            break;
+        case TRACE_MARKER_TYPE_FUNC_FRAME_PTR:
+            std::cerr << "<marker: function fp value 0x" << std::hex
+                      << memref.marker.marker_value << std::dec << ">\n";
+            break;
         case TRACE_MARKER_TYPE_SYSCALL_FAILED:
             std::cerr << "<marker: system call failed: " << memref.marker.marker_value
                       << ">\n";
