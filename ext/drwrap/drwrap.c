@@ -820,7 +820,7 @@ drwrap_get_fp(void *wrapcxt_opaque)
     /* ensure we have the info we need */
     drwrap_get_mcontext_internal(wrapcxt_opaque, DR_MC_CONTROL);
     
-    return (void *)wrapcxt->mc->xbp;
+    return (void *)wrapcxt->mc->(xbp, IF_RISCV64_ELSE(a0,  r11));
 }
 
 
