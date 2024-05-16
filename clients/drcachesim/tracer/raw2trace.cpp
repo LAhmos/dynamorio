@@ -1196,9 +1196,10 @@ raw2trace_t::process_syscall_pt(raw2trace_thread_data_t *tdata, uint64_t syscall
     addr_t sysnum =
         pt_data->header[dynamorio::drmemtrace::PDB_HEADER_SYSNUM_IDX].sysnum.sysnum;
     std::vector<trace_entry_t> entries;
-    trace_entry_t start_entry = { .type = TRACE_TYPE_MARKER,
-                                  .size = TRACE_MARKER_TYPE_SYSCALL_TRACE_START,
-                                  .addr = sysnum };
+    trace_entry_t start_entry;
+    start_entry.type = TRACE_TYPE_MARKER;
+    start_entry.size = TRACE_MARKER_TYPE_SYSCALL_TRACE_START;
+    start_entry.addr = sysnum ;
     entries.push_back(start_entry);
     // TODO i#5505: When ir2trace starts adding synthesized read/write memrefs for
     // the kernel trace, change the trace file type from
@@ -1211,9 +1212,10 @@ raw2trace_t::process_syscall_pt(raw2trace_thread_data_t *tdata, uint64_t syscall
             std::to_string(ir2trace_convert_status) + "]";
         return false;
     }
-    trace_entry_t end_entry = { .type = TRACE_TYPE_MARKER,
-                                .size = TRACE_MARKER_TYPE_SYSCALL_TRACE_END,
-                                .addr = sysnum };
+    trace_entry_t end_entry;
+    end_entry.type = TRACE_TYPE_MARKER;
+    end_entry.size = TRACE_MARKER_TYPE_SYSCALL_TRACE_END;
+    end_entry.addr = sysnum ;
     entries.push_back(end_entry);
     if (entries.size() == 2) {
         tdata->error = "No trace entries generated from PT data";
